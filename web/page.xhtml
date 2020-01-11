@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f = "http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Employee</title>
+        <h:outputStylesheet name="/css/bootstrap.min.css"/>
+        <style type="text/css">
+            .datatable {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            #RegisterEmployee{
+                margin-right:20px;
+                margin-left:20px;
+            }
+        </style>
+    </h:head>
+    <h:body >
+        <p:layout style="min-width:400px;min-height:200px;" fullPage="true">
+            <p:layoutUnit position="north" resizable="true" size="250" minSize="40" maxSize="800">
+                <p:tooltip />
+                <h:form>
+                    <p:messages id="messages" showDetail="true" closable="true">
+                       
+                    </p:messages>
+                    <p:growl id="growl" showDetail="true" />
+                    <p:panel header="Employee Registration" >
+                        <!-- Person Information-->
+                        <h:panelGrid columns="6" id="RegisterEmployee" >
+
+                            <h:outputText value="Name: *" />
+                            <p:inputText value="#{employeeData.name}" required="true" label="Name" id="last"/>
+
+                            <h:outputText value="Department: *" style="margin-right:10px;margin-left:20px;"/>
+                            <p:selectOneMenu id="departmentMenu" value="#{employeeData.departmentForMenu}" effect="fold" editable="true" style="width:  50px">
+                                
+                                <f:selectItems   value="#{employeeData.departmentMenuMap}"  />
+                            </p:selectOneMenu> 
+                              <p:commandButton value="Save" action="#{employeeData.insertEmployee()}" 
+                                               style="margin-right:10px;margin-left:20px;"
+                                               class="btn btn-primary"  ajax="true"  update=":dataForm"
+                                               />
+                              <p:commandButton value="Reset" type="reset" action="#{employeeData.reset()}" class="btn btn-primary"/>
+                        </h:panelGrid>
+                       
+                    </p:panel>
+                    <p:accordionPanel>
+                                <p:tab title="Address Details">
+                                    <h:panelGrid columns="6" cellpadding="10">
+                                        <h:outputText value="City: " />
+                                        <p:inputText value="#{employeeData.city}" required="false" label="City"/>
+
+                                        <h:outputText value="Street: " />
+                                        <p:inputText value="#{employeeData.street}" required="false" label="Street"/>
+
+                                        <h:outputText value="Country: " />
+                                        <p:inputText value="#{employeeData.country}"  required="false" label="Country"  />
+                                    </h:panelGrid>
+                                </p:tab>
+                            </p:accordionPanel>
+
+                    
+                </h:form>
+
+
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center"  >
+                <h:form id="dataForm">
+                    <p:growl id="msgs" showDetail="true"/>
+                    <p:dataTable var="employee" value="#{employeeData.employees}"
+                                 class="table table-striped table-hover table-bordered"
+                                 rows="4"
+                                 paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="3,5,10"
+                                 editable="true"
+                                 emptyMessage="No records found."
+                                 style="text-align: center;">
+                        <f:facet name="header">
+                            Employee Data
+                        </f:facet>
+
+                        <p:ajax event="rowEdit" listener="#{employeeData.onRowEdit}" update=":dataForm:msgs"  />
+                        <p:ajax event="rowEditCancel" listener="#{employeeData.onRowCancel}" update=":dataForm:msgs"  />
+                        <p:column headerText="Name" >
+                            <h:outputText value="#{employee.name}" />
+                        </p:column>
+
+                        <p:column headerText="Department">
+                            <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{employee.department}" /></f:facet>
+                            <f:facet name="input">
+                                 <p:selectOneMenu id="departmentMenu" value="#{employeeData.departmentForMenu}" effect="fold" editable="true">
+                                <f:selectItems value="#{employeeData.departmentMenuMap}"  />
+                            </p:selectOneMenu> 
+                                
+                            </f:facet>
+                        </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Address">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{employee.address}" /></f:facet>
+                                <f:facet name="input">
+                                    <h:panelGrid columns="2" id="editAddressPanel" >
+                                        <h:outputText value="City: " />
+                                        <p:inputText value="#{employeeData.city}" required="false" label="City"/>
+
+                                        <h:outputText value="Street: " />
+                                        <p:inputText value="#{employeeData.street}" required="false" label="Street"/>
+
+                                        <h:outputText value="Country: " />
+                                        <p:inputText value="#{employeeData.country}"  required="false" label="Country"  />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Delete">
+                            <p:growl id="message" showDetail="true" />
+                            <p:commandButton  value="Delete" action="#{employeeData.deleteEmployee(employee)}" 
+                                              style="margin-right:20px;" update=":dataForm" ajax="true" 
+                                              class="btn btn-danger"
+                                              onstart="PF('bar').show() ;"
+                                               onsuccess="PF('bar').hide();">
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                            </p:confirmDialog>      
+                        </p:column> 
+                        <p:column headerText="Edit" style="width:60px">
+                            <p:rowEditor  >
+                            </p:rowEditor>
+                        </p:column>
+                    </p:dataTable>
+                    <p:notificationBar position="top" effect="slide" styleClass="top" widgetVar="bar" style="background-color: hotpink">
+                        <h:outputText value="Employee Deleted Successfully" style="font-size:36px;" />
+                    </p:notificationBar>
+                </h:form>
+            </p:layoutUnit>
+        </p:layout>
+        <br/>
+
+    </h:body>
+</html>
+

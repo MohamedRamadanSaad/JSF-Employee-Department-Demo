@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 
 /**
  *
- * @author dirac
+ * @author Mohamed Ramadan
  */
 @Embeddable
 public class Address {

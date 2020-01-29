@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 /**
  *
- * @author dirac
+ * @author Mohamed Ramadan
  */
 @Entity
 public class Department {

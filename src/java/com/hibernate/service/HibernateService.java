@@ -7,7 +7,7 @@ package com.hibernate.service;
 
 /**
  *
- * @author dirac
+ * @author Mohamed Ramadan
  */
 import com.hibernate.dao.DepartmentDAO;
 import com.hibernate.dao.EmployeeDAO;

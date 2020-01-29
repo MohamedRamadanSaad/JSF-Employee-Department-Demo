@@ -16,7 +16,7 @@ import org.hibernate.Transaction;
 
 /**
  *
- * @author dirac
+ * @author Mohamed Ramadan
  */
 public class DepartmentDAO {
      public void insertDepartment(Department dep) {
